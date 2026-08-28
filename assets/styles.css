@@ -1,0 +1,67 @@
+// AYZARA — comportements partagés
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Menu mobile
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('.nav-mobile');
+  const closeBtn = document.querySelector('.nav-mobile .close-x');
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => nav.classList.add('open'));
+    if (closeBtn) closeBtn.addEventListener('click', () => nav.classList.remove('open'));
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+  }
+
+  // Reveal progressif au scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && revealEls.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
+
+  // Newsletter simulée
+  const letterForm = document.querySelector('.letter form');
+  if (letterForm) {
+    letterForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const confirm = document.querySelector('.letter .confirm');
+      letterForm.style.display = 'none';
+      if (confirm) confirm.style.display = 'block';
+    });
+  }
+
+  // Recherche éditoriale simulée
+  const searchForm = document.querySelector('.search-box');
+  if (searchForm) {
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = searchForm.querySelector('input');
+      const results = document.querySelector('#search-results');
+      if (results) {
+        results.textContent = input.value
+          ? `Recherche simulée — les articles correspondant à « ${input.value} » apparaîtront ici.`
+          : '';
+      }
+    });
+  }
+
+  // Filtres par rubrique (data-filter sur boutons + data-cat sur cartes)
+  const filterButtons = document.querySelectorAll('.filters button');
+  const filterCards = document.querySelectorAll('[data-cat]');
+  if (filterButtons.length && filterCards.length) {
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        filterCards.forEach(card => {
+          card.style.display = (f === 'tous' || card.dataset.cat === f) ? '' : 'none';
+        
