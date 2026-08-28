@@ -64,4 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const f = btn.dataset.filter;
         filterCards.forEach(card => {
           card.style.display = (f === 'tous' || card.dataset.cat === f) ? '' : 'none';
-        
+        });
+      });
+    });
+  }
+});
